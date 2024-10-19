@@ -1,7 +1,49 @@
-﻿@page "/"
+﻿@rendermode InteractiveServer
+@page "/"
+@using FileUpload.Services;
+@inject IFileUpload fileUpload;
 
-<PageTitle>Home</PageTitle>
+<div class="col-6">
+    <h1>File Upload in Blazor</h1>
+    <div class="form-group">
+        <InputFile OnChange="OnInputFileChange" multiple />
+        <button class="btn btn-sm btn-success" type="button"
+            @onclick="UploadFiles">Upload</button>
+        <br/>
+    </div>
+    <br/>
+    <label>@labelText</label>
+    <br/>
+</div>
 
-<h1>Hello, world!</h1>
+@code{
+    IReadOnlyList<IBrowserFile> selectedFiles;
 
-Welcome to your new app.
+    private string labelText = "";
+
+    private void OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        selectedFiles = new List<IBrowserFile>();
+        selectedFiles = e.GetMultipleFiles();
+    }
+
+    private async Task UploadFiles()
+    {
+        try
+        {
+            if (selectedFiles != null && selectedFiles.Count > 0)
+            {
+                foreach (var file in selectedFiles)
+                {
+                    await fileUpload.UploadFile(file);
+                }
+
+                labelText = $"Upload of {selectedFiles.Count} files successfull.";
+            }
+        }
+        catch (Exception ex)
+        {
+            labelText = $"Upload failed due to {ex.Message}";
+        }
+    }
+}
