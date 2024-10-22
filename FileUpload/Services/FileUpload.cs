@@ -12,8 +12,9 @@ namespace FileUpload.Services
     {
         private IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<FileUpload> _logger;
+        const long MAXALLOWEDSIZE = 1024000;
 
-        public FileUpload(
+		public FileUpload(
             IWebHostEnvironment webHostEnvironment,
             ILogger<FileUpload> logger)
         {
@@ -29,7 +30,7 @@ namespace FileUpload.Services
                 {
                     var uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", file.Name);
 
-                    using (var stream = file.OpenReadStream())
+                    using (var stream = file.OpenReadStream(MAXALLOWEDSIZE))
                     {
                         var fileStream = File.Create(uploadPath);
                         await stream.CopyToAsync(fileStream);
