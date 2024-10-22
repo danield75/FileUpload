@@ -13,6 +13,7 @@ namespace FileUpload
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
             builder.Services.AddScoped<IFileUpload, Services.FileUpload>();
+			builder.Services.AddScoped<IFileDownload, Services.FileDownload>();
 
             var app = builder.Build();
 
